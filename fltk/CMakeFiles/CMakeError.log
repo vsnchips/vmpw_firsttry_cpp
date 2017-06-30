@@ -1,0 +1,97 @@
+Determining if the function strlcat exists failed with the following output:
+Change Dir: /home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_3d42d/fast"
+make: Warning: File 'Makefile' has modification time 3549 s in the future
+/usr/bin/make -f CMakeFiles/cmTC_3d42d.dir/build.make CMakeFiles/cmTC_3d42d.dir/build
+make[1]: Entering directory '/home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp'
+make[1]: Warning: File 'CMakeFiles/cmTC_3d42d.dir/flags.make' has modification time 3549 s in the future
+Building C object CMakeFiles/cmTC_3d42d.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=strlcat   -o CMakeFiles/cmTC_3d42d.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.8/Modules/CheckFunctionExists.c
+Linking C executable cmTC_3d42d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3d42d.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=strlcat    -rdynamic CMakeFiles/cmTC_3d42d.dir/CheckFunctionExists.c.o  -o cmTC_3d42d 
+CMakeFiles/cmTC_3d42d.dir/CheckFunctionExists.c.o: In function `main':
+CheckFunctionExists.c:(.text+0x10): undefined reference to `strlcat'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_3d42d.dir/build.make:98: cmTC_3d42d] Error 1
+make[1]: Leaving directory '/home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp'
+make: *** [Makefile:126: cmTC_3d42d/fast] Error 2
+
+
+Determining if the function strlcpy exists failed with the following output:
+Change Dir: /home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_18d03/fast"
+make: Warning: File 'Makefile' has modification time 3549 s in the future
+/usr/bin/make -f CMakeFiles/cmTC_18d03.dir/build.make CMakeFiles/cmTC_18d03.dir/build
+make[1]: Entering directory '/home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp'
+make[1]: Warning: File 'CMakeFiles/cmTC_18d03.dir/flags.make' has modification time 3549 s in the future
+Building C object CMakeFiles/cmTC_18d03.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=strlcpy   -o CMakeFiles/cmTC_18d03.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.8/Modules/CheckFunctionExists.c
+Linking C executable cmTC_18d03
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_18d03.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=strlcpy    -rdynamic CMakeFiles/cmTC_18d03.dir/CheckFunctionExists.c.o  -o cmTC_18d03 
+CMakeFiles/cmTC_18d03.dir/CheckFunctionExists.c.o: In function `main':
+CheckFunctionExists.c:(.text+0x10): undefined reference to `strlcpy'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_18d03.dir/build.make:98: cmTC_18d03] Error 1
+make[1]: Leaving directory '/home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp'
+make: *** [Makefile:126: cmTC_18d03/fast] Error 2
+
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_c67b6/fast"
+make: Warning: File 'Makefile' has modification time 3549 s in the future
+/usr/bin/make -f CMakeFiles/cmTC_c67b6.dir/build.make CMakeFiles/cmTC_c67b6.dir/build
+make[1]: Entering directory '/home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp'
+make[1]: Warning: File 'CMakeFiles/cmTC_c67b6.dir/flags.make' has modification time 3549 s in the future
+Building C object CMakeFiles/cmTC_c67b6.dir/CheckSymbolExists.c.o
+/usr/bin/gcc  -I/usr/include/GL   -o CMakeFiles/cmTC_c67b6.dir/CheckSymbolExists.c.o   -c /home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_c67b6
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c67b6.dir/link.txt --verbose=1
+/usr/bin/gcc      -rdynamic CMakeFiles/cmTC_c67b6.dir/CheckSymbolExists.c.o  -o cmTC_c67b6 
+CMakeFiles/cmTC_c67b6.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_c67b6.dir/build.make:98: cmTC_c67b6] Error 1
+make[1]: Leaving directory '/home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp'
+make: *** [Makefile:126: cmTC_c67b6/fast] Error 2
+
+File /home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b4dbe/fast"
+make: Warning: File 'Makefile' has modification time 3548 s in the future
+/usr/bin/make -f CMakeFiles/cmTC_b4dbe.dir/build.make CMakeFiles/cmTC_b4dbe.dir/build
+make[1]: Entering directory '/home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp'
+make[1]: Warning: File 'CMakeFiles/cmTC_b4dbe.dir/flags.make' has modification time 3548 s in the future
+Building C object CMakeFiles/cmTC_b4dbe.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_b4dbe.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.8/Modules/CheckFunctionExists.c
+Linking C executable cmTC_b4dbe
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b4dbe.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_b4dbe.dir/CheckFunctionExists.c.o  -o cmTC_b4dbe -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_b4dbe.dir/build.make:98: cmTC_b4dbe] Error 1
+make[1]: Leaving directory '/home/shelly/mount/Hotprog/vmpw/fltk/CMakeFiles/CMakeTmp'
+make: *** [Makefile:126: cmTC_b4dbe/fast] Error 2
+
+
