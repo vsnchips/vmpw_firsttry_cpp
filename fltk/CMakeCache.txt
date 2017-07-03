@@ -15,6 +15,12 @@
 ########################
 
 //Path to a program.
+BIBER_COMPILER:FILEPATH=/usr/bin/vendor_perl/biber
+
+//Path to a program.
+BIBTEX_COMPILER:FILEPATH=/usr/bin/bibtex
+
+//Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
 //Choose the type of build, options are: None(CMAKE_CXX_FLAGS or
@@ -224,10 +230,16 @@ CMAKE_SUPPRESS_REGENERATION:BOOL=OFF
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Graphviz Dot tool for using Doxygen
-DOXYGEN_DOT_EXECUTABLE:FILEPATH=DOXYGEN_DOT_EXECUTABLE-NOTFOUND
+DOXYGEN_DOT_EXECUTABLE:FILEPATH=/usr/bin/dot
 
 //Doxygen documentation generation tool (http://www.doxygen.org)
-DOXYGEN_EXECUTABLE:FILEPATH=DOXYGEN_EXECUTABLE-NOTFOUND
+DOXYGEN_EXECUTABLE:FILEPATH=/usr/bin/doxygen
+
+//Path to a program.
+DVIPDF_CONVERTER:FILEPATH=/usr/bin/dvipdfm
+
+//Path to a program.
+DVIPS_CONVERTER:FILEPATH=/usr/bin/dvips
 
 //Value Computed by CMake
 FLTK_BINARY_DIR:STATIC=/home/shelly/mount/Hotprog/vmpw/fltk
@@ -313,11 +325,20 @@ HAVE_X11_XREGION_H:FILEPATH=/usr/include/X11/Xregion.h
 //Path to a file.
 HAVE_XDBE_H:PATH=/usr/include/X11/extensions
 
+//Path to a program.
+HTLATEX_COMPILER:FILEPATH=/usr/bin/htlatex
+
 //Path to a file.
 JPEG_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a library.
 JPEG_LIBRARY:FILEPATH=/usr/lib/libjpeg.so
+
+//Path to a program.
+LATEX2HTML_CONVERTER:FILEPATH=LATEX2HTML_CONVERTER-NOTFOUND
+
+//Path to a program.
+LATEX_COMPILER:FILEPATH=/usr/bin/latex
 
 //Path to a library.
 LIB_CAIRO:FILEPATH=/usr/lib/libcairo.so
@@ -349,6 +370,12 @@ LIB_png:FILEPATH=/usr/lib/libpng.so
 //Path to a library.
 LIB_zlib:FILEPATH=/usr/lib/libz.so
 
+//Path to a program.
+LUALATEX_COMPILER:FILEPATH=/usr/bin/lualatex
+
+//Path to a program.
+MAKEINDEX_COMPILER:FILEPATH=/usr/bin/makeindex
+
 //Path to a file.
 OPENGL_INCLUDE_DIR:PATH=/usr/include
 
@@ -371,6 +398,12 @@ OPTION_ARCHFLAGS:STRING=
 //build example programs
 OPTION_BUILD_EXAMPLES:BOOL=ON
 
+//build html docs
+OPTION_BUILD_HTML_DOCUMENTATION:BOOL=OFF
+
+//build pdf docs
+OPTION_BUILD_PDF_DOCUMENTATION:BOOL=OFF
+
 //Build shared libraries(in addition to static libraries)
 OPTION_BUILD_SHARED_LIBS:BOOL=OFF
 
@@ -382,6 +415,12 @@ OPTION_CAIROEXT:BOOL=OFF
 
 //create backwards compatibility links
 OPTION_CREATE_LINKS:BOOL=OFF
+
+//install html docs
+OPTION_INSTALL_HTML_DOCUMENTATION:BOOL=OFF
+
+//install pdf docs
+OPTION_INSTALL_PDF_DOCUMENTATION:BOOL=OFF
 
 //enable large file support
 OPTION_LARGE_FILE:BOOL=ON
@@ -425,6 +464,12 @@ OPTION_USE_XINERAMA:BOOL=ON
 //use lib Xrender
 OPTION_USE_XRENDER:BOOL=ON
 
+//Path to a program.
+PDFLATEX_COMPILER:FILEPATH=/usr/bin/pdflatex
+
+//Path to a program.
+PDFTOPS_CONVERTER:FILEPATH=/usr/bin/pdftops
+
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
 
@@ -436,6 +481,9 @@ PNG_LIBRARY_RELEASE:FILEPATH=/usr/lib/libpng.so
 
 //Path to a file.
 PNG_PNG_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a program.
+PS2PDF_CONVERTER:FILEPATH=/usr/bin/ps2pdf14
 
 //Path to a program.
 ProcessorCount_cmd_getconf:FILEPATH=/usr/bin/getconf
@@ -629,6 +677,12 @@ X11_xf86misc_INCLUDE_PATH:PATH=X11_xf86misc_INCLUDE_PATH-NOTFOUND
 //Path to a file.
 X11_xf86vmode_INCLUDE_PATH:PATH=/usr/include
 
+//Path to a program.
+XELATEX_COMPILER:FILEPATH=/usr/bin/xelatex
+
+//Path to a program.
+XINDY_COMPILER:FILEPATH=/usr/bin/xindy
+
 //Path to a file.
 ZLIB_INCLUDE_DIR:PATH=/usr/include
 
@@ -655,6 +709,10 @@ fltk_images_LIB_DEPENDS:STATIC=general;fltk;general;/usr/lib/libjpeg.so;general;
 # INTERNAL cache entries
 ########################
 
+//ADVANCED property for variable: BIBER_COMPILER
+BIBER_COMPILER-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: BIBTEX_COMPILER
+BIBTEX_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
 //This is the directory where this CMakeCache.txt was created
@@ -846,8 +904,16 @@ CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 DOXYGEN_DOT_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: DOXYGEN_EXECUTABLE
 DOXYGEN_EXECUTABLE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DVIPDF_CONVERTER
+DVIPDF_CONVERTER-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DVIPS_CONVERTER
+DVIPS_CONVERTER-ADVANCED:INTERNAL=1
+//Details about finding Doxygen
+FIND_PACKAGE_MESSAGE_DETAILS_Doxygen:INTERNAL=[/usr/bin/doxygen][v1.8.13()]
 //Details about finding JPEG
 FIND_PACKAGE_MESSAGE_DETAILS_JPEG:INTERNAL=[/usr/lib/libjpeg.so][/usr/include][v()]
+//Details about finding LATEX
+FIND_PACKAGE_MESSAGE_DETAILS_LATEX:INTERNAL=[/usr/bin/latex][c ][v()]
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib/libGL.so][/usr/include][v()]
 //Details about finding PNG
@@ -941,10 +1007,16 @@ HAVE_WORDS_BIGENDIAN:INTERNAL=TRUE
 HAVE_X11_XREGION_H-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: HAVE_XDBE_H
 HAVE_XDBE_H-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: HTLATEX_COMPILER
+HTLATEX_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: JPEG_INCLUDE_DIR
 JPEG_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: JPEG_LIBRARY
 JPEG_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LATEX2HTML_CONVERTER
+LATEX2HTML_CONVERTER-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LATEX_COMPILER
+LATEX_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: LIB_CAIRO
 LIB_CAIRO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: LIB_GL
@@ -963,6 +1035,10 @@ LIB_jpeg-ADVANCED:INTERNAL=1
 LIB_png-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: LIB_zlib
 LIB_zlib-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: LUALATEX_COMPILER
+LUALATEX_COMPILER-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: MAKEINDEX_COMPILER
+MAKEINDEX_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_INCLUDE_DIR
 OPENGL_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPENGL_gl_LIBRARY
@@ -973,6 +1049,10 @@ OPENGL_glu_LIBRARY-ADVANCED:INTERNAL=1
 OPENGL_xmesa_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: OPTION_USE_POLL
 OPTION_USE_POLL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PDFLATEX_COMPILER
+PDFLATEX_COMPILER-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PDFTOPS_CONVERTER
+PDFTOPS_CONVERTER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PNG_LIBRARY_DEBUG
@@ -981,6 +1061,8 @@ PNG_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 PNG_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PNG_PNG_INCLUDE_DIR
 PNG_PNG_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PS2PDF_CONVERTER
+PS2PDF_CONVERTER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ProcessorCount_cmd_getconf
 ProcessorCount_cmd_getconf-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ProcessorCount_cmd_sysctl
@@ -1119,6 +1201,10 @@ X11_dpms_INCLUDE_PATH-ADVANCED:INTERNAL=1
 X11_xf86misc_INCLUDE_PATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: X11_xf86vmode_INCLUDE_PATH
 X11_xf86vmode_INCLUDE_PATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: XELATEX_COMPILER
+XELATEX_COMPILER-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: XINDY_COMPILER
+XINDY_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ZLIB_INCLUDE_DIR
 ZLIB_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ZLIB_LIBRARY_DEBUG

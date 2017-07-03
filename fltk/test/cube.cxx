@@ -201,20 +201,21 @@ int main(int argc, char **argv) {
   // this!
   cube->make_current(); // causes context to be created
   cube2->context(cube->context()); // share the contexts
+
 #endif
   for (;;) {
-    if (form->visible() && speed->value())
-      {if (!Fl::check()) break;}	// returns immediately
-    else
-      {if (!Fl::wait()) break;}	// waits until something happens
-    cube->wire = wire->value();
-    cube2->wire = !wire->value();
-    cube->size = cube2->size = size->value();
-    cube->speed = cube2->speed = speed->value();
-    cube->redraw();
-    cube2->redraw();
-    if (Fl::readqueue() == button) break;
-  }
+      if (form->visible() && speed->value())
+        {if (!Fl::check()) break;}	// returns immediately
+      else
+        {if (!Fl::wait()) break;}	// waits until something happens
+      cube->wire = wire->value();
+      cube2->wire = !wire->value();
+      cube->size = cube2->size = size->value();
+      cube->speed = cube2->speed = speed->value();
+      cube->redraw();
+      cube2->redraw();
+      if (Fl::readqueue() == button) break;
+    }
   return 0;
 }
 

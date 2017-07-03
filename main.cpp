@@ -1,29 +1,51 @@
-//
-// "$Id: OpenGL3test.cxx 11791 2016-06-22 07:18:30Z manolo $"
-//
-// Tiny OpenGL v3 demo program for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 1998-2015 by Bill Spitzak and others.
-//
-// This library is free software. Distribution and use rights are outlined in
-// the file "COPYING" which should have been included with this file.  If this
-// file is missing or damaged, see the license at:
-//
-//     http://www.fltk.org/COPYING.php
-//
-// Please report all bugs and problems on the following page:
-//
-//     http://www.fltk.org/str.php
-//
+//#if defined(HAVE_PTHREAD) || defined(WIN32)
 
 #include <stdarg.h>
+#include <stdio.h>
+#include <iostream>
+
+
+// FL GUI CONTAINER STUFF
+//#include <FL/gl.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Radio_Light_Button.H>
+#include <FL/Fl_Slider.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Text_Buffer.H>
+
+//Boost Interoperability etc
+#include <boost/array.hpp>
+#include <boost/asio.hpp>   // NOT to be confused with Asio audio
+#include <boost/interprocess/managed_shared_memory.hpp>
+#include <boost/interprocess/allocators/allocator.hpp>
+#include <boost/interprocess/offset_ptr.hpp>
+#include <boost/interprocess/containers/map.hpp>
+#include <boost/interprocess/containers/vector.hpp>
+#include <string>
+#include <cstdlib> //std::system
+#include <functional>
+#include <utility>
+
+using boost::asio::ip::udp;
+using namespace std;
+
+//SOCKETS
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <stdexcept>
+#include<arpa/inet.h>
+
+
+#include<math.h>
+
 #if defined(__APPLE__)
 #  include <OpenGL/gl3.h> // defines OpenGL 3.0+ functions
 #else
@@ -33,150 +55,184 @@
 #  include <GL/glew.h>
 #endif
 
-//#include <GL/glew.h>
-//#include <GL/gl.h>
-//include <GL/glx.h>
+#include "threads.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+//FileSystem
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+//source include
+#include "globals.h"
+#include "vmpwin.hpp"
+
+
+#if !HAVE_GL
+class welcome_box : public Fl_Box {
+public:
+  double lasttime;
+  int wire;
+  double size;
+  double speed;
+  welcome_box(int x,int y,int w,int h,const char *l=0)
+    :Fl_Box(FL_DOWN_BOX,x,y,w,h,l){
+      label("VMPW needs OpenGL");
+  }
+};
+#else
+class welcome_box : public Fl_Box {
+public:
+  double lasttime;
+  int wire;
+  double size;
+  double speed;
+  welcome_box(int x,int y,int w,int h,const char *l=0)
+    :Fl_Box(FL_DOWN_BOX,x,y,w,h,l){
+      label("VMPW found OpenGL");
+  }
+};
+#endif
 
 void add_output(const char *format, ...);
 
-
 class SimpleGL3Window : public Fl_Gl_Window {
-  GLuint shaderProgram;
-  GLuint vertexArrayObject;
-  GLuint vertexBuffer;
-  GLint positionUniform;
-  GLint colourAttribute;
-  GLint positionAttribute;
-  int gl_version_major;
-public:
-  SimpleGL3Window(int x, int y, int w, int h) :  Fl_Gl_Window(x, y, w, h) {
-    mode(FL_RGB8 | FL_DOUBLE | FL_OPENGL3);
-    shaderProgram = 0;
-  }
-  void draw(void) {
-    if (gl_version_major < 3) return;
-    if (!shaderProgram) {
-      GLuint  vs;
-      GLuint  fs;
-      int Mslv, mslv; // major and minor version numbers of the shading language
-      sscanf((char*)glGetString(GL_SHADING_LANGUAGE_VERSION), "%d.%d", &Mslv, &mslv);
-      add_output("Shading Language Version=%d.%d\n",Mslv, mslv);
-      const char *vss_format="#version %d%d\n\
-      uniform vec2 p;\
-      in vec4 position;\
-      in vec4 colour;\
-      out vec4 colourV;\
-      void main (void)\
-      {\
-      colourV = colour;\
-      gl_Position = vec4(p, 0.0, 0.0) + position;\
-      }";
-      char vss_string[300]; const char *vss = vss_string;
-      sprintf(vss_string, vss_format, Mslv, mslv);
-      const char *fss_format="#version %d%d\n\
-      in vec4 colourV;\
-      out vec4 fragColour;\
-      void main(void)\
-      {\
-      fragColour = colourV;\
-      }";
-      char fss_string[200]; const char *fss = fss_string;
-      sprintf(fss_string, fss_format, Mslv, mslv);
-      GLint err; GLchar CLOG[1000]; GLsizei length;
-      vs = glCreateShader(GL_VERTEX_SHADER);
-      glShaderSource(vs, 1, &vss, NULL);
-      glCompileShader(vs);
-      glGetShaderiv(vs, GL_COMPILE_STATUS, &err);
-      if (err != GL_TRUE) {
-    glGetShaderInfoLog(vs, sizeof(CLOG), &length, CLOG);
-    add_output("vs ShaderInfoLog=%s\n",CLOG);
+    GLuint shaderProgram;
+    GLuint vertexArrayObject;
+    GLuint vertexBuffer;
+    GLint positionUniform;
+    GLint colourAttribute;
+    GLint positionAttribute;
+    int gl_version_major;
+  public:
+    SimpleGL3Window(int x, int y, int w, int h) :  Fl_Gl_Window(x, y, w, h) {
+      mode(FL_RGB8 | FL_DOUBLE | FL_OPENGL3);
+      shaderProgram = 0;
     }
-      fs = glCreateShader(GL_FRAGMENT_SHADER);
-      glShaderSource(fs, 1, &fss, NULL);
-      glCompileShader(fs);
-      glGetShaderiv(fs, GL_COMPILE_STATUS, &err);
-      if (err != GL_TRUE) {
-    glGetShaderInfoLog(fs, sizeof(CLOG), &length, CLOG);
-    add_output("fs ShaderInfoLog=%s\n",CLOG);
-    }
-      // Attach the shaders
-      shaderProgram = glCreateProgram();
-      glAttachShader(shaderProgram, vs);
-      glAttachShader(shaderProgram, fs);
-      glBindFragDataLocation(shaderProgram, 0, "fragColour");
-      glLinkProgram(shaderProgram);
-      glGetProgramiv(shaderProgram, GL_LINK_STATUS, &err);
-      if (err != GL_TRUE) {
-        glGetProgramInfoLog(shaderProgram, sizeof(CLOG), &length, CLOG);
-        add_output("link log=%s\n", CLOG);
+    void draw(void) {
+      if (gl_version_major < 3) return;
+      if (!shaderProgram) {
+        GLuint  vs;
+        GLuint  fs;
+        int Mslv, mslv; // major and minor version numbers of the shading language
+        sscanf((char*)glGetString(GL_SHADING_LANGUAGE_VERSION), "%d.%d", &Mslv, &mslv);
+        add_output("Shading Language Version=%d.%d\n",Mslv, mslv);
+        const char *vss_format="#version %d%d\n\
+        uniform vec2 p;\
+        in vec4 position;\
+        in vec4 colour;\
+        out vec4 colourV;\
+        void main (void)\
+        {\
+        colourV = colour;\
+        gl_Position = vec4(p, 0.0, 0.0) + position;\
+        }";
+        char vss_string[300]; const char *vss = vss_string;
+        sprintf(vss_string, vss_format, Mslv, mslv);
+        const char *fss_format="#version %d%d\n\
+        in vec4 colourV;\
+        out vec4 fragColour;\
+        void main(void)\
+        {\
+        fragColour = colourV;\
+        }";
+        char fss_string[200]; const char *fss = fss_string;
+        sprintf(fss_string, fss_format, Mslv, mslv);
+        GLint err; GLchar CLOG[1000]; GLsizei length;
+        vs = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vs, 1, &vss, NULL);
+        glCompileShader(vs);
+        glGetShaderiv(vs, GL_COMPILE_STATUS, &err);
+        if (err != GL_TRUE) {
+      glGetShaderInfoLog(vs, sizeof(CLOG), &length, CLOG);
+      add_output("vs ShaderInfoLog=%s\n",CLOG);
       }
-      // Get pointers to uniforms and attributes
-      positionUniform = glGetUniformLocation(shaderProgram, "p");
-      colourAttribute = glGetAttribLocation(shaderProgram, "colour");
-      positionAttribute = glGetAttribLocation(shaderProgram, "position");
-      glDeleteShader(vs);
-      glDeleteShader(fs);
-      // Upload vertices (1st four values in a row) and colours (following four values)
-      GLfloat vertexData[]= { -0.5,-0.5,0.0,1.0,   1.0,0.0,0.0,1.0,
-        -0.5, 0.5,0.0,1.0,   0.0,1.0,0.0,1.0,
-        0.5, 0.5,0.0,1.0,   0.0,0.0,1.0,1.0,
-        0.5,-0.5,0.0,1.0,   1.0,1.0,1.0,1.0};
-      glGenVertexArrays(1, &vertexArrayObject);
-      glBindVertexArray(vertexArrayObject);
+        fs = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fs, 1, &fss, NULL);
+        glCompileShader(fs);
+        glGetShaderiv(fs, GL_COMPILE_STATUS, &err);
+        if (err != GL_TRUE) {
+      glGetShaderInfoLog(fs, sizeof(CLOG), &length, CLOG);
+      add_output("fs ShaderInfoLog=%s\n",CLOG);
+      }
+        // Attach the shaders
+        shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vs);
+        glAttachShader(shaderProgram, fs);
+        glBindFragDataLocation(shaderProgram, 0, "fragColour");
+        glLinkProgram(shaderProgram);
+        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &err);
+        if (err != GL_TRUE) {
+          glGetProgramInfoLog(shaderProgram, sizeof(CLOG), &length, CLOG);
+          add_output("link log=%s\n", CLOG);
+        }
+        // Get pointers to uniforms and attributes
+        positionUniform = glGetUniformLocation(shaderProgram, "p");
+        colourAttribute = glGetAttribLocation(shaderProgram, "colour");
+        positionAttribute = glGetAttribLocation(shaderProgram, "position");
+        glDeleteShader(vs);
+        glDeleteShader(fs);
+        // Upload vertices (1st four values in a row) and colours (following four values)
+        GLfloat vertexData[]= { -0.5,-0.5,0.0,1.0,   1.0,0.0,0.0,1.0,
+          -0.5, 0.5,0.0,1.0,   0.0,1.0,0.0,1.0,
+          0.5, 0.5,0.0,1.0,   0.0,0.0,1.0,1.0,
+          0.5,-0.5,0.0,1.0,   1.0,1.0,1.0,1.0};
+        glGenVertexArrays(1, &vertexArrayObject);
+        glBindVertexArray(vertexArrayObject);
 
-      glGenBuffers(1, &vertexBuffer);
-      glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-      glBufferData(GL_ARRAY_BUFFER, 4*8*sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
+        glGenBuffers(1, &vertexBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glBufferData(GL_ARRAY_BUFFER, 4*8*sizeof(GLfloat), vertexData, GL_STATIC_DRAW);
 
-      glEnableVertexAttribArray((GLuint)positionAttribute);
-      glEnableVertexAttribArray((GLuint)colourAttribute  );
-      glVertexAttribPointer((GLuint)positionAttribute, 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), 0);
-      glVertexAttribPointer((GLuint)colourAttribute  , 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (char*)0+4*sizeof(GLfloat));
+        glEnableVertexAttribArray((GLuint)positionAttribute);
+        glEnableVertexAttribArray((GLuint)colourAttribute  );
+        glVertexAttribPointer((GLuint)positionAttribute, 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), 0);
+        glVertexAttribPointer((GLuint)colourAttribute  , 4, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (char*)0+4*sizeof(GLfloat));
+      }
+      else if ((!valid())) {
+        glViewport(0, 0, pixel_w(), pixel_h());
+      }
+      glClearColor(0.08, 0.8, 0.8, 1.0);
+      glClear(GL_COLOR_BUFFER_BIT);
+      glUseProgram(shaderProgram);
+      GLfloat p[]={0,0};
+      glUniform2fv(positionUniform, 1, (const GLfloat *)&p);
+      glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
-    else if ((!valid())) {
-      glViewport(0, 0, pixel_w(), pixel_h());
-    }
-    glClearColor(0.08, 0.8, 0.8, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shaderProgram);
-    GLfloat p[]={0,0};
-    glUniform2fv(positionUniform, 1, (const GLfloat *)&p);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-  }
-  virtual int handle(int event) {
-    static int first = 1;
-    if (first && event == FL_SHOW && shown()) {
-      first = 0;
-      make_current();
-#ifndef __APPLE__
-      GLenum err = glewInit(); // defines pters to functions of OpenGL V 1.2 and above
-      if (err) Fl::warning("glewInit() failed returning %u", err);
-      else add_output("Using GLEW %s\n", glewGetString(GLEW_VERSION));
-#endif
-      const uchar *glv = glGetString(GL_VERSION);
-      add_output("GL_VERSION=%s\n", glv);
-      sscanf((const char *)glv, "%d", &gl_version_major);
-      if (gl_version_major < 3) add_output("\nThis platform does not support OpenGL V3\n\n");
-    }
+    virtual int handle(int event) {
+      static int first = 1;
+      if (first && event == FL_SHOW && shown()) {
+        first = 0;
+        make_current();
+  #ifndef __APPLE__
+        GLenum err = glewInit(); // defines pters to functions of OpenGL V 1.2 and above
+        if (err) Fl::warning("glewInit() failed returning %u", err);
+        else add_output("Using GLEW %s\n", glewGetString(GLEW_VERSION));
+  #endif
+        const uchar *glv = glGetString(GL_VERSION);
+        add_output("GL_VERSION=%s\n", glv);
+        sscanf((const char *)glv, "%d", &gl_version_major);
+        if (gl_version_major < 3) add_output("\nThis platform does not support OpenGL V3\n\n");
+      }
 
-    if (event == FL_PUSH && gl_version_major >= 3) {
-      static float factor = 1.1;
-      GLfloat data[4];
-      glGetBufferSubData(GL_ARRAY_BUFFER, 0, 4*sizeof(GLfloat), data);
-      if (data[0] < -0.88 || data[0] > -0.5) factor = 1/factor;
-      data[0] *= factor;
-      glBufferSubData(GL_ARRAY_BUFFER, 0, 4*sizeof(GLfloat), data);
-      glGetBufferSubData(GL_ARRAY_BUFFER, 24*sizeof(GLfloat), 4*sizeof(GLfloat), data);
-      data[0] *= factor;
-      glBufferSubData(GL_ARRAY_BUFFER, 24*sizeof(GLfloat), 4*sizeof(GLfloat), data);
-      redraw();
-      add_output("push  Fl_Gl_Window::pixels_per_unit()=%.1f\n", pixels_per_unit());
-      return 1;
+      if (event == FL_PUSH && gl_version_major >= 3) {
+        static float factor = 1.1;
+        GLfloat data[4];
+        glGetBufferSubData(GL_ARRAY_BUFFER, 0, 4*sizeof(GLfloat), data);
+        if (data[0] < -1.8 || data[0] > -0.2) factor = 1/factor;
+        data[0] *= factor;
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 4*sizeof(GLfloat), data);
+        glGetBufferSubData(GL_ARRAY_BUFFER, 24*sizeof(GLfloat), 4*sizeof(GLfloat), data);
+        data[0] *= factor;
+        glBufferSubData(GL_ARRAY_BUFFER, 24*sizeof(GLfloat), 4*sizeof(GLfloat), data);
+        redraw();
+        add_output("push  Fl_Gl_Window::pixels_per_unit()=%.1f\n", pixels_per_unit());
+        return 1;
+      }
+      return Fl_Gl_Window::handle(event);
     }
-    return Fl_Gl_Window::handle(event);
-  }
-  void reset(void) { shaderProgram = 0; }
+    void reset(void) { shaderProgram = 0; }
 };
 
 
@@ -193,7 +249,7 @@ void toggle_double(Fl_Widget *wid, void *data) {
 
 Fl_Text_Display *output; // shared between output_win() and add_output()
 
-void output_win(SimpleGL3Window *gl)
+void output_win(VMPWin *gl)
 {
   output = new Fl_Text_Display(300,0,500, 280);
   Fl_Light_Button *lb = new Fl_Light_Button(300, 280, 500, 20, "Double-Buffered");
@@ -217,20 +273,74 @@ void add_output(const char *format, ...)
 }
 
 
-int main(int argc, char **argv)
-{
-  Fl::use_high_res_GL(1);
-  Fl_Window *topwin = new Fl_Window(800, 300);
-  SimpleGL3Window *win = new SimpleGL3Window(0, 0, 300, 300);
-  win->end();
-  output_win(win);
-  topwin->end();
-  topwin->resizable(win);
-  topwin->label("Click GL panel to reshape");
-  topwin->show(argc, argv);
-  Fl::run();
+void tick(void*){
+    
+    //printf("frame + %d",speed->value());
+
+    mainwin->redraw();
+    Fl::repeat_timeout(0.005,tick);
 }
 
 //
-// End of "$Id: OpenGL3test.cxx 11791 2016-06-22 07:18:30Z manolo $".
-//
+
+int main(int argc, char **argv)
+{
+
+//INTEROP STUFF FIRST ////////////////////////////////////////////////
+
+  int slidersock;
+  if ((slidersock = socket(AF_INET , SOCK_DGRAM, 0) ) < 0 ){
+      perror("\ncannot create socket");
+      return 0;
+  } else {
+      cout << "\nOpened a slider socket" << endl;
+
+      struct sockaddr_in addr;
+
+
+      addr.sin_family = AF_INET;
+      addr.sin_addr.s_addr = htonl(INADDR_ANY);
+      addr.sin_port = htons(55555);
+
+     if (bind(slidersock, (struct sockaddr *)&addr, sizeof(addr)) < 0 ){
+          printf("\nbind failed");
+      } else cout << "\nSocket bound!" << flush;
+}
+// ////////////////////////////////////////////////////////////////////
+
+
+  // FL GUI INITIALISATION
+
+  Fl::use_high_res_GL(1);
+  mainwin = new VMPWin(0, 0, 300, 300);
+
+
+  output_win(mainwin);
+  mainwin->end();
+
+  Fl::visual(FL_DOUBLE|FL_INDEX);
+
+  struct stat fragshader;
+
+  if (argc != 2) {
+       fprintf(stderr, "Usage: %s <pathname>\n", argv[0]);
+   }
+
+  if (stat(argv[1], &fragshader) == -1) {
+       perror("stat");
+      // exit(EXIT_FAILURE);
+   }
+  mainwin->show();
+
+  form = new Fl_Window(510+390,390,"Visual Music Performance Workstation");
+  speed = new Fl_Slider(FL_VERT_SLIDER,390,90,40,220,"Speed");
+  //Fl_Box *b = new Fl_Box(FL_NO_BOX,cube->x(),size->y(),
+  //           cube->w(),size->h(),0);
+  //form->resizable(b);
+  //b->hide();
+  form->end();
+
+  Fl::add_timeout(0.1,tick);
+
+  Fl::run();
+}

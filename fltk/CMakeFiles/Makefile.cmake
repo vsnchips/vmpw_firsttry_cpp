@@ -54,6 +54,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.8/Modules/FLTKCompatibility.cmake"
   "/usr/share/cmake-3.8/Modules/FindDoxygen.cmake"
   "/usr/share/cmake-3.8/Modules/FindJPEG.cmake"
+  "/usr/share/cmake-3.8/Modules/FindLATEX.cmake"
   "/usr/share/cmake-3.8/Modules/FindOpenGL.cmake"
   "/usr/share/cmake-3.8/Modules/FindPNG.cmake"
   "/usr/share/cmake-3.8/Modules/FindPackageHandleStandardArgs.cmake"
