@@ -50,7 +50,7 @@
 #  if defined(WIN32)
 #    define GLEW_STATIC 1
 #  endif
-#  include <GL/glew.h>
+//#  include <GL/glew.h>
 #endif
 
 #include "threads.h"
@@ -65,18 +65,23 @@
 
 class FL_EXPORT VMPWin : public Fl_Gl_Window{
 
+public:
     GLuint shaderProgram;
     GLuint vertexArrayObject;
     GLuint vertexBuffer;
+    static const GLfloat g_vertex_buffer_data[];
     GLint positionUniform;
     GLint colourAttribute;
     GLint positionAttribute;
     int gl_version_major;
-public:
+
     VMPWin(int x,int y,int w,int h,const char *l=0);
+
+    void loadShader();
 
     void draw();
 
+    void reset();
 private:
 
 };
