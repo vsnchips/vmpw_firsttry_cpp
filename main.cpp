@@ -150,6 +150,9 @@ int main(int argc, char **argv)
 
 
   // FL GUI INITIALISATION
+
+  glewExperimental = GL_TRUE;
+
   Fl::use_high_res_GL(1);
   //VMPWin mainwin(0, 0, 300, 300);
   mainwin = new VMPWin(0, 0, 300, 300);

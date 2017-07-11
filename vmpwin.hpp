@@ -77,7 +77,7 @@ public:
 
     VMPWin(int x,int y,int w,int h,const char *l=0);
 
-    void loadShader();
+    GLuint loadShader();
 
     void draw();
 
